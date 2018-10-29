@@ -38,8 +38,7 @@ class Manager < Employee
   # using a queue
   def bonus(multiplier)
     total = 0
-
-    sub_employee = self.subordinates
+    sub_employee = self.subordinates.dup
     until sub_employee.empty?
       employee = sub_employee.first
       sub_employee += employee.subordinates unless employee.subordinates.empty?
