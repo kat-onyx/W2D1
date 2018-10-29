@@ -1,3 +1,4 @@
+require 'byebug'
 # PHASE 2
 def convert_to_int(str)
   begin
@@ -32,9 +33,18 @@ end
 # PHASE 4
 class BestFriend
   def initialize(name, yrs_known, fav_pastime)
-    @name = name
-    @yrs_known = yrs_known
-    @fav_pastime = fav_pastime
+    begin
+      # debugger
+      @name = name
+      @fav_pastime = fav_pastime
+      @yrs_known = yrs_known
+      raise YearsTooFew, "you must be friends for at least 5 years" if @yrs_known < 5
+      raise EmptyName, "@name is empty" if @name.empty?
+      raise EmptyPasttime, "@fav_pastime is empty" if @fav_pastime.empty?
+    rescue YearsTooFew, EmptyName, EmptyPasttime => error_message
+      puts error_message
+    end
+
   end
 
   def talk_about_friendship
@@ -48,4 +58,8 @@ class BestFriend
   def give_friendship_bracelet
     puts "Hey bestie, I made you a friendship bracelet. It says my name, #{@name}, so you never forget me."
   end
+
+  class YearsTooFew < StandardError; end;
+  class EmptyName < StandardError; end;
+  class EmptyPasttime < StandardError; end;
 end
