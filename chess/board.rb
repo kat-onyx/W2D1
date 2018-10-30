@@ -6,10 +6,11 @@ class Board
 
   def initialize
     @grid = Array.new(8) {Array.new(8)}
+    populate_board
   end
 
-  WHITE_START_PIECES = [Rook.new("white"), Knight.new("white"), Bishop.new("white"), Queen.new("white"), King.new("white"), Bishop.new("white"), Knight.new("white"), Rook.new("white")]
-  BLACK_START_PIECES = [Rook.new("black"), Knight.new("black"), Bishop.new("black"), King.new("black"), Queen.new("black"), Bishop.new("black"), Knight.new("black"), Rook.new("black")]
+  WHITE_START_PIECES = [Rook.new(:white), Knight.new(:white), Bishop.new(:white), Queen.new(:white), King.new(:white), Bishop.new(:white), Knight.new(:white), Rook.new(:white)]
+  BLACK_START_PIECES = [Rook.new(:black), Knight.new(:black), Bishop.new(:black), King.new(:black), Queen.new(:black), Bishop.new(:black), Knight.new(:black), Rook.new(:black)]
 
   def populate_board
     # debugger
@@ -19,9 +20,9 @@ class Board
         when 0
           @grid[row_idx][col_idx] = BLACK_START_PIECES[col_idx]
         when 1
-          @grid[row_idx][col_idx] = Pawn.new("black")
+          @grid[row_idx][col_idx] = King.new(:black)
         when 6
-          @grid[row_idx][col_idx] = Pawn.new("white")
+          @grid[row_idx][col_idx] = Pawn.new(:white)
         when 7
           @grid[row_idx][col_idx] = WHITE_START_PIECES[col_idx]
         else
@@ -34,10 +35,14 @@ class Board
   def move_piece(start_pos, end_pos)
     startx, starty = start_pos
     stopx, stopy = end_pos
-    raise InvalidStartPosError if @grid[startx][starty].is_a? NullPiece
-    raise InvalidEndPosError unless (valid_move?(end_pos) && valid_destination?(start_pos, end_pos))
+    raise "No Piece At Start Position" if @grid[startx][starty].is_a? NullPiece
+    raise "End Position Off Board" unless valid_pos?(end_pos)
+    raise "End Position Has Allied Piece" unless valid_destination?(start_pos, end_pos)
+    piece = @grid[startx][starty]
+    possible_moves = piece.moves(start_pos, self)
+    raise "Piece Does Not Move Like That" unless possible_moves.include?(end_pos)
     piece_moved = @grid[startx][starty]
-    if valid_destination?(start_pos, end_pos)
+    if valid_destination?(start_pos, end_pos) && possible_moves.include?(end_pos)
       @grid[stopx][stopy] = piece_moved
       @grid[startx][starty] = NullPiece.instance
     end
@@ -52,7 +57,7 @@ class Board
     true
   end
 
-  def valid_move?(pos)
+  def valid_pos?(pos)
     x,y = pos
     return false if (x > 7 || x < 0) || (y > 7 || y < 0)
     true
