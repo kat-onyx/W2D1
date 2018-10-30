@@ -1,6 +1,9 @@
 
 class Piece
-  def initialize
+  attr_reader :color
+  
+  def initialize(color)
+    @color = color
   end
 end
 
@@ -22,5 +25,11 @@ end
 class Pawn < Piece
 end
 
+require 'singleton'
+
 class NullPiece < Piece
+  include Singleton
+  def initialize
+    @color = nil
+  end
 end
