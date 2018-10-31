@@ -20,7 +20,7 @@ class Board
         when 0
           @grid[row_idx][col_idx] = BLACK_START_PIECES[col_idx]
         when 1
-          @grid[row_idx][col_idx] = King.new(:black)
+          @grid[row_idx][col_idx] = Rook.new(:black)
         when 6
           @grid[row_idx][col_idx] = Pawn.new(:white)
         when 7

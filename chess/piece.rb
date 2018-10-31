@@ -1,14 +1,80 @@
 module SlidingPiece
   def moves(start_pos, board)
     xstart, ystart = start_pos
-    possible_moves = []
-    8.times do |idx|
-      possible_moves << [xstart, idx]
-      possible_moves << [idx, ystart]
+
+    position_arr = []
+    row = xstart
+    col = ystart
+    until col > 7
+      position_arr << [xstart, col] if ystart != col
+      col += 1
     end
 
-    possible_moves.reject! { |move| move ==  start_pos }
+    generate_unblocked_moves(start_pos, position_arr, board)
+
+    #
+    # until x > 7
+    #   position_arr << [x, ystart]
+    #   x += 1
+    # end
+    #
+    # until x < 0
+    #   position_arr << [x, ystart]
+    #   x -= 1
+    # end
+    #
+    # until y < 0
+    #   position_arr << [xstart, y]
+    #   y -= 1
+    # end
+
+
+    # 8.times do |idx|
+    #   possible_moves << [xstart, idx]
+    #   possible_moves << [idx, ystart]
+    # end
+    #
+    # possible_moves.reject! { |move| move ==  start_pos }
+
+    # idx_arr = []
+
+
+    # board.grid[xstart].each_with_index do |space, idx|
+    #   until idx == ystart
+    #     if space_has_piece?(xstart,idx)
+    #       idx_arr << pos of piece if piece is not null
+    #     end
+    #   end
+    #   if idx == ystart
+    #     last_piece_on_left = idx_arr.last
+    #     idx_arr = []
+    #   end
+    #   if idx > ystart
+    #     idx_arr << pos of piece if piece is not null && idx_arr.empty? == false
+    #   end
+    # end
   end
+
+  def generate_unblocked_moves(start_pos, position_arr, board)
+    xstart, ystart = start_pos
+    possible_moves = []
+
+    position_arr.each do |position|
+      x, y = position
+      debugger
+      piece_count = 0
+      unless piece_count == 1
+        if board.grid[x][y].is_a? NullPiece
+          possible_moves << position
+        elsif board.grid[x][y].color != board.grid[xstart][ystart].color
+          possible_moves << position
+          piece_count += 1
+        end
+      end
+    end
+    return possible_moves
+  end
+
 end
 
 module SteppingPiece
@@ -53,6 +119,7 @@ class Piece
 end
 
 class Rook < Piece
+  include SlidingPiece
 end
 
 class Knight < Piece
@@ -65,6 +132,7 @@ class Knight < Piece
 end
 
 class Bishop < Piece
+  include SlidingPiece
 end
 
 class King < Piece
@@ -76,6 +144,7 @@ class King < Piece
 end
 
 class Queen < Piece
+  include SlidingPiece
 end
 
 class Pawn < Piece
